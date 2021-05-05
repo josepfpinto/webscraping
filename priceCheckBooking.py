@@ -12,8 +12,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-import datetime
-import pandas as pd
+import Datetime
+import pandas as Pd
 from pandas.tseries.offsets import BDay
 
 # --- Initiates driver ---
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     
     #Initiate Browser & Today Date
     driver = init_driver()
-    day = datetime.datetime.today().strftime('%d-%m-%Y')
+    day = Datetime.datetime.today().strftime('%d-%m-%Y')
     
     # ---User Data---
     #coinURL = "&selected_currency=EUR&changed_currency=1&top_currency=1"
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     endURL = "&group_children=0&label_click=undef&nflt=ht_id%3D201%3Breview_score%3D80%3Bdistance%3D1000%3Bhotelfacility%3D107%3Broomfacility%3D38%3Bdi%3D1279%3Bmin_bathrooms%3D1%3B&no_rooms=2&offset=0&percent_htype_apt=1&raw_dest_type=city&room1=A&room2=A%2CA&sb_price_type=total&shw_aparth=1&slp_r_match=1&src=searchresults&srpvid=1d28860b68600070&ss=Porto&ssb=empty&ssne=Porto&ssne_untouched=Porto&top_ufis=1&selected_currency=EUR&changed_currency=1&top_currency=1"
     #dateIn = datetime.date(2020,2,17)
     #months = 5
-    dateIn = datetime.datetime.strptime(wksInput.acell('H5').value, '%d-%m-%Y').date()
+    dateIn = Datetime.datetime.strptime(wksInput.acell('H5').value, '%d-%m-%Y').date()
     months = int(wksInput.acell('I5').value)
     totalDays = int(wksInput.acell('K5').value)
     totalAdults = str(wksInput.acell('L5').value)

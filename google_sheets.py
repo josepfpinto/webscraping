@@ -1,5 +1,5 @@
-import bin.config as config
-import gspread
+import bin.config as Config
+import gspread as Gs
 from oauth2client.service_account import ServiceAccountCredentials
 
 
@@ -11,16 +11,16 @@ def api_google():
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     credentials = ServiceAccountCredentials.from_json_keyfile_name('bin/Google_API.json', scope)
     
-    goog = gspread.authorize(credentials)
+    goog = Gs.authorize(credentials)
     
-    sh = goog.open(config.google_sheet)
-    wks = goog.open(config.google_sheet).sheet1
+    sh = goog.open(Config.google_sheet)
+    wks = goog.open(Config.google_sheet).sheet1
     wksInput = sh.get_worksheet(1)
     
     return wks, wksInput
 
 
-def init():
+def init(day):
     
     # Initiate Google API
     wks, wksInput = api_google()
@@ -28,8 +28,10 @@ def init():
     # Prepare Google Sheets
     print ('Preparing Google Sheets')
 
-    if len(wks.row_values(2)) > 1 and wks.row_values(2)[1] == day:
-        print ("SAME DAY!")
+    if wks.acell('A1').value == 'PLATF' or wks.acell('A1').value == null:
+        print ("- empty")
+    elif wks.row_values(2)[1] == day:
+        print ("- same day")
     else:
         wks.clear()
         wks.append_row(['PLATF', 'TODAY', 'DATE', 'NAME', 'RESERVAS', 'SCORE', 'PRICES', 'SUPERHOST'])

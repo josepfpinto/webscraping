@@ -1,5 +1,5 @@
-import bin.config as config
-import googleSheets
+import bin.config as Config
+import google_sheets as Gsheets
 import time
 from selenium import webdriver
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
@@ -10,36 +10,62 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import ElementNotVisibleException
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
-import datetime
-import pandas as pd
-from pandas.tseries.offsets import BDay
+import datetime as Date
+import pandas as PD
+from pandas.tseries.offsets import BusinessDay
 
 
 # --- Initiates driver ---
 def init_driver():
     print ('Init driver -------------')
+
     b = FirefoxBinary('/usr/bin/firefox')
     b.add_command_line_options("-private")
+
     driver = webdriver.Firefox(firefox_binary=b)
-    driver.wait = WebDriverWait(driver, 5)
+    driver.wait = WebDriverWait(driver, 2)
+
     return driver
 
+
+# --- Set URL ---
+def newURL (dateIn, totalDays, totalAdults):
+    print ('newURL')
+
+    try:
+        day = str(dateIn.day)
+        month = str(dateIn.month)
+        year = str(dateIn.year)
+        end_day = str(dateIn.day + totalDays)
+
+        midURL = Config.midURL.format(month, day, year, month, end_day, year, totalAdults)
+        url = Config.startURL + midURL + Config.endURL
+
+        driver.get(url)
+
+        w = WebDriverWait(driver, 8)
+        w.until(expected_conditions.presence_of_element_located((By.TAG_NAME, "h1")))
+
+    except TimeoutException:
+        print("Timeout - no page load")
+
+    except:
+        print("URL FAILED!")
 
 
 # --- Main Program ---    
 if __name__ == "__main__":
 
+    day = Date.datetime.today().strftime('%d-%m-%Y')
+
     # Initiate Google Sheets
-    wks, wksInput = googleSheets.init()
+    wks, wksInput = Gsheets.init(day)
 
     # Initiate browser & today date
     driver = init_driver()
-    day = datetime.datetime.today().strftime('%d-%m-%Y')
-
-    time.sleep(2)
 
     # Get User Data
-    dateIn = datetime.datetime.strptime(wksInput.acell('H5').value, '%d-%m-%Y').date()
+    dateIn = Date.datetime.strptime(wksInput.acell('H5').value, '%d-%m-%Y').date()
     months = int(wksInput.acell('I5').value)
     totalDays = int(wksInput.acell('K5').value)
     totalAdults = str(wksInput.acell('L5').value)
@@ -52,15 +78,18 @@ if __name__ == "__main__":
     while i < months:
         print ("---- ", dateIn, " ----")
         # time.sleep(5)
-        newURL (dateIn, introURL, endURL, totalDays, totalAdults)
+        newURL (dateIn, totalDays, totalAdults)
+        
         loopPages (day, dateIn, totalDays, cleaningFee, totalAdults)
-        if i%2 == 0:
-            dateOut = dateIn + BDay(20)
-        else:
-            dateOut = dateIn + BDay(25)
-        dateIn = dateOut.date()
-        i += 1
 
+        if i%2 == 0:
+            dateOut = dateIn + BusinessDay(20)
+        else:
+            dateOut = dateIn + BusinessDay(25)
+        dateIn = dateOut.date()
+        
+        i += 1
+    
     # Close browser & close program 
     time.sleep(5)
     driver.quit()
