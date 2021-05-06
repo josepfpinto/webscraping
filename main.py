@@ -1,5 +1,6 @@
 import bin.config as Config
 import google_sheets as Gsheets
+import webpage_scraping as WebScrap
 import time
 from selenium import webdriver
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
@@ -17,7 +18,8 @@ from pandas.tseries.offsets import BusinessDay
 
 # --- Initiates driver ---
 def init_driver():
-    print ('Init driver -------------')
+    
+    print ('\nInit driver')
 
     b = FirefoxBinary('/usr/bin/firefox')
     b.add_command_line_options("-private")
@@ -28,9 +30,10 @@ def init_driver():
     return driver
 
 
-# --- Set URL ---
-def newURL (dateIn, totalDays, totalAdults):
-    print ('newURL')
+# --- Sets URL ---
+def new_url (dateIn, totalDays, totalAdults):
+
+    print ('\nCreating and fetching new URL')
 
     try:
         day = str(dateIn.day)
@@ -43,14 +46,14 @@ def newURL (dateIn, totalDays, totalAdults):
 
         driver.get(url)
 
-        w = WebDriverWait(driver, 8)
-        w.until(expected_conditions.presence_of_element_located((By.TAG_NAME, "h1")))
+        w = WebDriverWait(driver, 15)
+        w.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.sr_header")))
 
-    except TimeoutException:
-        print("Timeout - no page load")
+    except (NoSuchElementException, TimeoutException) as error:
+        print("Timeout - no page load. Error: ", error)
 
-    except:
-        print("URL FAILED!")
+    except Exception as error:
+        print("URL FAILED! Error: ", error)
 
 
 # --- Main Program ---    
@@ -72,15 +75,15 @@ if __name__ == "__main__":
     cleaningFee = int(wksInput.acell('M5').value)
 
     #Find and Copy Values to Sheet
-    print ('START!')
+    print ('\nSTART!')
 
     i = 0
     while i < months:
         print ("---- ", dateIn, " ----")
         # time.sleep(5)
-        newURL (dateIn, totalDays, totalAdults)
+        new_url(dateIn, totalDays, totalAdults)
         
-        loopPages (day, dateIn, totalDays, cleaningFee, totalAdults)
+        WebScrap.loop_pages(driver, day, dateIn, totalDays, cleaningFee, totalAdults)
 
         if i%2 == 0:
             dateOut = dateIn + BusinessDay(20)
