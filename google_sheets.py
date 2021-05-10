@@ -21,7 +21,7 @@ def init(day):
     # Prepare Google Sheets
     print("\nPreparing Google Sheets")
 
-    if wks.acell("A1").value == "PLATF" or wks.acell("A1").value == null:
+    if wks.acell("A1").value == "PLATF" and wks.acell("A1").value == "":
         print("- sheet empty")
     elif wks.row_values(2)[1] == day:
         print("- same day")
