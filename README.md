@@ -1,7 +1,5 @@
 # WEB SCRAPING
 
-(still in development...)
-
 ## The Idea
 
 Web scraping algorithm that reads specific pages of Booking.com (after a initial filter is done) to retrieve specific information about apartments: name, prices, score, reservations, ...
