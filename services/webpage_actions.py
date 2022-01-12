@@ -5,33 +5,30 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
-from services import exceptions, webpage_scraping
-
-import main
-
-driver = main.driver
+from services import exceptions, webpage_scraping, g_driver
 
 
 def wait(seconds, css_selector):
-    w = WebDriverWait(driver, seconds)
+    w = WebDriverWait(g_driver.google_driver, seconds)
     if len(css_selector) > 1:
         w.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, css_selector)))
 
 
 def close_cookies():
+    print("- closing cookies")
     try:
-        w = WebDriverWait(driver, 15)
+        w = WebDriverWait(g_driver.google_driver, 15)
         w.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, "button#onetrust-accept-btn-handler")))
-        driver.find_element_by_css_selector(
+        g_driver.google_driver.find_element_by_css_selector(
             "button#onetrust-accept-btn-handler").click()
-        webpage_scraping.is_first_page = False
         print("- cookie button clicked")
     except (NoSuchElementException, TimeoutException) as error:
         exceptions.simple("- no cookie button found... Moving on:", error)
 
     finally:
+        webpage_scraping.is_first_page = False
         time.sleep(3)
 
 

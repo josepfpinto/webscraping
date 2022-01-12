@@ -3,11 +3,9 @@ from pandas.tseries.offsets import BusinessDay
 
 from services import g_driver, new_url, webpage_scraping as WebScrap, google_sheets as Gsheets
 
-global driver
-
-
 # --- Main Program ---
 if __name__ == "__main__":
+
     day = Date.datetime.today().strftime("%d-%m-%Y")
     wks, wksInput = Gsheets.init(day)
     g_driver.init()
@@ -32,4 +30,4 @@ if __name__ == "__main__":
         dateIn = dateOut.date()
         i += 1
 
-    g_driver.close()
+    # g_driver.close()

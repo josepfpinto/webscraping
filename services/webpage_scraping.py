@@ -1,12 +1,9 @@
-import google_sheets as Gsheets
 import time
 from selenium.common.exceptions import TimeoutException
 
-import main
-from services import webpage_actions, exceptions
+from services import webpage_actions, exceptions, google_sheets as Gsheets, g_driver
 
 is_first_page = True
-driver = main.driver
 
 
 # --- Loops through all available pages with apartments within the search parameters ---
@@ -23,8 +20,10 @@ def loop_pages(day, dateIn, totalDays, cleaningFee, totalAdults):
 
         # Loop through pages
         pages = int(
-            driver.find_element_by_css_selector("li.bui-pagination__item:nth-child(7) > a:nth-child(1) > "
-                                                "div:nth-child(2)").text)
+            g_driver.google_driver.find_element_by_css_selector(
+                "div.e603a69fe1 > ol:last-child > li.ce83a38554 > button").text)
+
+        print(pages)
 
         for page in range(pages):
             time.sleep(2)
@@ -33,7 +32,7 @@ def loop_pages(day, dateIn, totalDays, cleaningFee, totalAdults):
             print("- length of apartment list for page ", page, ": ", len(sheetList))
 
             if page != pages - 1:
-                driver.find_element_by_css_selector(".paging-next").click()
+                g_driver.google_driver.find_element_by_css_selector(".paging-next").click()
                 webpage_actions.wait(15, "ul.bui-pagination__list")
 
         Gsheets.send_values(sheetList)
@@ -52,8 +51,8 @@ def scrape_page(day, sheetList, dateIn, totalDays, cleaningFee, totalAdults):
     try:
         platform = "B"
         webpage_actions.wait_for_apartments()
-        apartmentList = driver.find_elements_by_css_selector(
-            "div.sr_item.sr_item_new.sr_item_default.sr_property_block.sr_flex_layout")
+        apartmentList = g_driver.google_driver.find_element_by_css_selector(
+            "div.sr_item.sr_item_new.sr_item_default.sr_property_block.sr_flex_layout");
 
         # Getting info for each apartment
         for apartment in apartmentList:

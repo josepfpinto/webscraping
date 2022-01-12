@@ -1,3 +1,6 @@
+import os
+
+from pathlib import Path
 import config.sheets_id as sheet
 from gspread import Spreadsheet, Worksheet
 from selenium.common.exceptions import TimeoutException
@@ -18,14 +21,18 @@ def init(day):
 
     # Prepare Google Sheets
     print("\nPreparing Google Sheets")
-    if wks.acell("A1").value == "PLATF" and wks.acell("A1").value == "":
+    print()
+    if wks.acell("A1").value != "PLATF":
+        print("- wrong set up in sheet!")
+        wks.clear()
+        wks.append_row(["PLATF", "TODAY", "DATE", "NAME", "RESERV", "SCORE", "PRICES", "SUPERHOST"])
+    elif len(wks.col_values(1)) == 1:
         print("- sheet empty")
     elif wks.row_values(2)[1] == day:
         print("- same day")
     else:
         wks.clear()
-        wks.append_row(["PLATF", "TODAY", "DATE", "NAME",
-                        "RESERV", "SCORE", "PRICES", "SUPERHOST"])
+        wks.append_row(["PLATF", "TODAY", "DATE", "NAME", "RESERV", "SCORE", "PRICES", "SUPERHOST"])
 
     return wks, wksInput
 
@@ -36,11 +43,11 @@ def connect_to_google():
     global wks, wksInput, sh
 
     try:
+        file_path = os.path.realpath(Path(__file__).parent.parent / "config/credentials.json")
+
         credentials = service_account.Credentials.from_service_account_file(
-            '../config/credentials.json')
-        scoped_credentials = credentials.with_scopes(
-            ['https://www.googleapis.com/auth/cloud-platform'])
-        goog = gspread.authorize(scoped_credentials)
+            file_path, scopes=['https://www.googleapis.com/auth/drive'])
+        goog = gspread.authorize(credentials)
 
         sh = goog.open(sheet.main)
         wks = goog.open(sheet.main).sheet1

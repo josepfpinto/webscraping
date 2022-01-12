@@ -1,8 +1,7 @@
 import config.web_url as webUrl
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
-import main
-from services import webpage_actions, exceptions
+from services import webpage_actions, exceptions, g_driver
 
 
 def get(dateIn, totalDays, totalAdults):
@@ -14,7 +13,7 @@ def get(dateIn, totalDays, totalAdults):
         year = str(dateIn.year)
         endDay = str(dateIn.day + totalDays)
         midURL = webUrl.mid.format(month, startDay, year, month, endDay, year, totalAdults)
-        main.driver.get(webUrl.start + midURL + webUrl.end)
+        g_driver.google_driver.get(webUrl.start + midURL + webUrl.end)
         webpage_actions.wait(15, "div.sr_header")
 
     except (NoSuchElementException, TimeoutException) as error:
