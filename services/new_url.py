@@ -4,7 +4,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from services import webpage_actions, exceptions, g_driver
 
 
-def get(dateIn, totalDays, totalAdults):
+def get(dateIn, totalDays, totalAdults, numberRooms):
     print("\nCreating and fetching new URL")
 
     try:
@@ -12,7 +12,7 @@ def get(dateIn, totalDays, totalAdults):
         month = str(dateIn.month)
         year = str(dateIn.year)
         endDay = str(dateIn.day + totalDays)
-        midURL = webUrl.mid.format(month, startDay, year, month, endDay, year, totalAdults)
+        midURL = webUrl.mid.format(month, startDay, year, month, endDay, year, totalAdults, numberRooms)
         g_driver.google_driver.get(webUrl.start + midURL + webUrl.end)
         webpage_actions.wait(15, "div.sr_header")
 

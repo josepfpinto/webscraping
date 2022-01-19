@@ -1,5 +1,6 @@
 import time
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 
 from services import webpage_actions, exceptions, google_sheets as Gsheets, g_driver
 
@@ -20,10 +21,10 @@ def loop_pages(day, dateIn, totalDays, cleaningFee, totalAdults):
 
         # Loop through pages
         pages = int(
-            g_driver.google_driver.find_element_by_css_selector(
-                "div.e603a69fe1 > ol:last-child > li.ce83a38554 > button").text)
+            g_driver.google_driver.find_element(By.CSS_SELECTOR,
+                                                "div.e603a69fe1 > ol._5312cbccb > li.ce83a38554:last-child > button").text)
 
-        print(pages)
+        print("pages: " + str(pages))
 
         for page in range(pages):
             time.sleep(2)
@@ -32,13 +33,12 @@ def loop_pages(day, dateIn, totalDays, cleaningFee, totalAdults):
             print("- length of apartment list for page ", page, ": ", len(sheetList))
 
             if page != pages - 1:
-                g_driver.google_driver.find_element_by_css_selector(".paging-next").click()
-                webpage_actions.wait(15, "ul.bui-pagination__list")
+                webpage_actions.next_page("div._b2280f5e6 > div._e83c57f96 > nav._09161c483")
 
         Gsheets.send_values(sheetList)
 
     except TimeoutException as error:
-        exceptions.simple("Timeout - failed to loop pages. Error:", error)
+        exceptions.simple("Timeout - failed to loop pages. Error: ", error)
 
     except Exception as error:
         exceptions.more_info("Pages loop FAILED!", error)
@@ -51,12 +51,11 @@ def scrape_page(day, sheetList, dateIn, totalDays, cleaningFee, totalAdults):
     try:
         platform = "B"
         webpage_actions.wait_for_apartments()
-        apartmentList = g_driver.google_driver.find_element_by_css_selector(
-            "div.sr_item.sr_item_new.sr_item_default.sr_property_block.sr_flex_layout");
+        apartmentList = g_driver.google_driver.find_elements(By.CSS_SELECTOR, '[data-testid = "property-card"]')
 
         # Getting info for each apartment
         for apartment in apartmentList:
-            name = apartment.find_element_by_css_selector("span.sr-hotel__name").text
+            name = apartment.find_element(By.CSS_SELECTOR, '[data-testid = "title"]').text
             reviews = webpage_actions.get_reviews(apartment)
             score = webpage_actions.get_score(apartment)
             price = webpage_actions.get_price(apartment, totalAdults, totalDays, cleaningFee)

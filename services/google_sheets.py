@@ -25,14 +25,14 @@ def init(day):
     if wks.acell("A1").value != "PLATF":
         print("- wrong set up in sheet!")
         wks.clear()
-        wks.append_row(["PLATF", "TODAY", "DATE", "NAME", "RESERV", "SCORE", "PRICES", "SUPERHOST"])
+        wks.append_row(["PLATF", "TODAY", "DATE", "NAME", "RESERV", "SCORE", "PRICES"])
     elif len(wks.col_values(1)) == 1:
         print("- sheet empty")
     elif wks.row_values(2)[1] == day:
         print("- same day")
     else:
         wks.clear()
-        wks.append_row(["PLATF", "TODAY", "DATE", "NAME", "RESERV", "SCORE", "PRICES", "SUPERHOST"])
+        wks.append_row(["PLATF", "TODAY", "DATE", "NAME", "RESERV", "SCORE", "PRICES"])
 
     return wks, wksInput
 
@@ -49,9 +49,9 @@ def connect_to_google():
             file_path, scopes=['https://www.googleapis.com/auth/drive'])
         goog = gspread.authorize(credentials)
 
-        sh = goog.open(sheet.main)
-        wks = goog.open(sheet.main).sheet1
-        wksInput = sh.get_worksheet(1)
+        sh = goog.open(sheet.sheetName)
+        wks = sh.worksheet(sheet.resultWorksheet)
+        wksInput = sh.worksheet(sheet.settingsWorksheet)
 
     except Exception as error:
         exceptions.more_info("GOOGLE API FAILED!", error)

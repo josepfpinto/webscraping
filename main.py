@@ -12,22 +12,22 @@ if __name__ == "__main__":
 
     # Get User Data
     dateIn = Date.datetime.strptime(
-        wksInput.acell("H5").value, "%d-%m-%Y").date()
-    months = int(wksInput.acell("I5").value)
-    totalDays = int(wksInput.acell("K5").value)
-    totalAdults = str(wksInput.acell("L5").value)
-    cleaningFee = int(wksInput.acell("M5").value)
-
+        wksInput.acell("B2").value, "%d-%m-%Y").date()
+    months = int(wksInput.acell("C2").value)
+    numberRooms = str(wksInput.acell("D2").value)
+    totalDays = int(wksInput.acell("E2").value)
+    totalAdults = str(wksInput.acell("F2").value)
+    cleaningFee = int(wksInput.acell("G2").value)
     # Find and Copy Values to Sheet
     print("\nSTART!")
 
     i = 0
     while i < months:
         print("---- ", dateIn, " ----")
-        new_url.get(dateIn, totalDays, totalAdults)
+        new_url.get(dateIn, totalDays, totalAdults, numberRooms)
         WebScrap.loop_pages(day, dateIn, totalDays, cleaningFee, totalAdults)
         dateOut = dateIn + BusinessDay(20) if i % 2 == 0 else dateIn + BusinessDay(25)
         dateIn = dateOut.date()
         i += 1
 
-    # g_driver.close()
+    g_driver.close()
