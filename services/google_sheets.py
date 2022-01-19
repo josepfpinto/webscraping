@@ -1,4 +1,5 @@
 import os
+from cProfile import label
 
 from pathlib import Path
 import config.sheets_id as sheet
@@ -66,7 +67,7 @@ def send_values(finalList):
 
     try:
         emptyCell = len(wks.col_values(1)) + 1
-        sh.values_update("Sheet1!A{}".format(emptyCell), params={
+        sh.values_update(f"{sheet.resultWorksheet}!A{emptyCell}", params={
             "valueInputOption": "RAW"}, body={"values": finalList})
 
     except TimeoutException as error:
