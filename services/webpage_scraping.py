@@ -33,7 +33,7 @@ def loop_pages(day, dateIn, totalDays, cleaningFee, totalAdults):
             print("- length of apartment list for page ", page, ": ", len(sheetList))
 
             if page != pages - 1:
-                webpage_actions.next_page("div._b2280f5e6 > div._e83c57f96 > nav._09161c483")
+                webpage_actions.next_page("div._5312cbccb")
 
         Gsheets.send_values(sheetList)
 

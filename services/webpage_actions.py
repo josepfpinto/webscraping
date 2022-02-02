@@ -21,8 +21,8 @@ def close_cookies():
         w = WebDriverWait(g_driver.google_driver, 15)
         w.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, "button#onetrust-accept-btn-handler")))
-        g_driver.google_driver.find_element_by_css_selector(
-            "button#onetrust-accept-btn-handler").click()
+        g_driver.google_driver.find_element(By.CSS_SELECTOR,
+                                            "button#onetrust-accept-btn-handler").click()
         print("- cookie button clicked")
     except (NoSuchElementException, TimeoutException) as error:
         exceptions.simple("- no cookie button found... Moving on: ", error)
@@ -42,8 +42,8 @@ def wait_for_apartments():
 
 def next_page(navBar):
     try:
-        g_driver.google_driver.find_element(By.CSS_SELECTOR, navBar).find_element(By.CLASS_NAME,
-                                                                                  "_4310f7077._fd15ae127").click()
+        g_driver.google_driver.find_element(By.CSS_SELECTOR, navBar).find_element(By.CSS_SELECTOR,
+                                                                                  "div.ce83a38554._ea2496c5b > button").click()
         wait(15, navBar)
     except (NoSuchElementException, TimeoutException) as error:
         exceptions.simple("- no next page button: ", error)
@@ -53,7 +53,8 @@ def next_page(navBar):
 def get_price(apartment, totalAdults, totalDays, cleaningFee):
     text = apartment.find_element(By.CSS_SELECTOR, '[data-testid = "price-and-discounted-price"]').find_element(
         By.CLASS_NAME, 'fde444d7ef._e885fdc12').text
-    price = int(text.split(' ')[-1])
+    priceText = text.split(' ')[-1]
+    price = int(priceText.replace(',', ''))
     dayTax = int(totalAdults) * 2
     tax = 7 * dayTax if totalDays > 7 else totalDays * dayTax
     return (price - cleaningFee - tax) / totalDays
