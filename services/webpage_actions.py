@@ -54,10 +54,10 @@ def get_price(apartment, totalAdults, totalDays, cleaningFee):
     text = apartment.find_element(By.CSS_SELECTOR, '[data-testid = "price-and-discounted-price"]').find_element(
         By.CLASS_NAME, 'fde444d7ef._e885fdc12').text
     priceText = text.split(' ')[-1]
-    price = int(priceText.replace(',', ''))
+    price = float(priceText.replace(',', ''))
     dayTax = int(totalAdults) * 2
     tax = 7 * dayTax if totalDays > 7 else totalDays * dayTax
-    return (price - cleaningFee - tax) / totalDays
+    return round((price - cleaningFee - tax) / totalDays)
 
 
 def get_score(apartment):
