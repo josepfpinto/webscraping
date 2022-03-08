@@ -26,14 +26,14 @@ def init(day):
     if wks.acell("A1").value != "PLATF":
         print("- wrong set up in sheet!")
         wks.clear()
-        wks.append_row(["PLATF", "TODAY", "DATE", "NAME", "RESERV", "SCORE", "PRICES"])
+        wks.append_row(["PLATF", "TODAY", "DATE", "GUESTS", "NAME", "RESERV", "SCORE", "PRICES"])
     elif len(wks.col_values(1)) == 1:
         print("- sheet empty")
     elif wks.row_values(2)[1] == day:
         print("- same day")
     else:
         wks.clear()
-        wks.append_row(["PLATF", "TODAY", "DATE", "NAME", "RESERV", "SCORE", "PRICES"])
+        wks.append_row(["PLATF", "TODAY", "DATE", "GUESTS", "NAME", "RESERV", "SCORE", "PRICES"])
 
     return wks, wksInput
 

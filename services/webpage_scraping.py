@@ -59,7 +59,7 @@ def scrape_page(day, sheetList, dateIn, totalDays, cleaningFee, totalAdults):
             reviews = webpage_actions.get_reviews(apartment)
             score = webpage_actions.get_score(apartment)
             price = webpage_actions.get_price(apartment, totalAdults, totalDays, cleaningFee)
-            sheetList.append([platform, day, dateIn, name, reviews, score, price])
+            sheetList.append([platform, day, dateIn, totalAdults, name, reviews, score, price])
 
     except TimeoutException as error:
         exceptions.simple("Timeout - failed to scrape page. Error:", error)
