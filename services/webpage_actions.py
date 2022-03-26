@@ -61,7 +61,13 @@ def get_price(apartment, totalAdults, totalDays, cleaningFee):
 
 
 def get_score(apartment):
-    scoreRaw = apartment.find_element(By.CLASS_NAME, '_9c5f726ff.bd528f9ea6').text
+    try:
+        scoreRaw = apartment.find_element(By.CLASS_NAME, '_9c5f726ff.bd528f9ea6').text
+    except NoSuchElementException:
+        try:
+            scoreRaw = apartment.find_element(By.CLASS_NAME, '_9c5f726ff._192b3a196.f1cbb919ef').text[-2:]
+        except NoSuchElementException:
+            scoreRaw = '0'
     return int(scoreRaw) if scoreRaw == "10" else float(scoreRaw[0] + "." + scoreRaw[2])
 
 

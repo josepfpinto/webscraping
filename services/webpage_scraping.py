@@ -1,5 +1,5 @@
 import time
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from services import webpage_actions, exceptions, google_sheets as Gsheets, g_driver
@@ -20,9 +20,12 @@ def loop_pages(day, dateIn, totalDays, cleaningFee, totalAdults):
         sheetList = []
 
         # Loop through pages
-        pages = int(
-            g_driver.google_driver.find_element(By.CSS_SELECTOR,
-                                                "div.e603a69fe1 > ol._5312cbccb > li.ce83a38554:last-child > button").text)
+        try:
+            pages = int(
+                g_driver.google_driver.find_element(By.CSS_SELECTOR,
+                                                    "div.e603a69fe1 > ol._5312cbccb > li.ce83a38554:last-child > button").text)
+        except NoSuchElementException:
+            pages = 1
 
         print("pages: " + str(pages))
 
@@ -32,7 +35,7 @@ def loop_pages(day, dateIn, totalDays, cleaningFee, totalAdults):
             scrape_page(day, sheetList, dateIn, totalDays, cleaningFee, totalAdults)
             print("- length of apartment list for page ", page, ": ", len(sheetList))
 
-            if page != pages - 1:
+            if 0 != pages - 1:
                 webpage_actions.next_page("div._5312cbccb")
 
         Gsheets.send_values(sheetList)
