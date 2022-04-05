@@ -23,7 +23,7 @@ def loop_pages(day, dateIn, totalDays, cleaningFee, totalAdults):
         try:
             pages = int(
                 g_driver.google_driver.find_element(By.CSS_SELECTOR,
-                                                    "div.e603a69fe1 > ol._5312cbccb > li.ce83a38554:last-child > button").text)
+                                                    "div.d7a0553560 > div.b727170def > nav > div > div.eef2c3ca89 > ol > li:last-child").text)
         except NoSuchElementException:
             pages = 1
 
@@ -36,9 +36,8 @@ def loop_pages(day, dateIn, totalDays, cleaningFee, totalAdults):
             print("- length of apartment list for page ", page, ": ", len(sheetList))
 
             if 0 != pages - 1:
-                webpage_actions.next_page("div._5312cbccb")
-
-        Gsheets.send_values(sheetList)
+                webpage_actions.next_page()
+                Gsheets.send_values(sheetList)
 
     except TimeoutException as error:
         exceptions.simple("Timeout - failed to loop pages. Error: ", error)

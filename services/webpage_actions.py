@@ -34,17 +34,16 @@ def close_cookies():
 
 def wait_for_apartments():
     try:
-        wait(15, "div._814193827")
+        wait(15, "div.a826ba81c4.fe821aea6c.fa2f36ad22.afd256fc79.d08f526e0d.ed11e24d01.da89aeb942")
     except (NoSuchElementException, TimeoutException) as error:
         exceptions.simple("- no apartments found: ", error)
         return error
 
 
-def next_page(navBar):
+def next_page():
     try:
-        g_driver.google_driver.find_element(By.CSS_SELECTOR, navBar).find_element(By.CSS_SELECTOR,
-                                                                                  "div.ce83a38554._ea2496c5b > button").click()
-        wait(15, navBar)
+        g_driver.google_driver.find_element(By.CSS_SELECTOR,'[aria-label="Next page"]').click()
+        wait_for_apartments()
     except (NoSuchElementException, TimeoutException) as error:
         exceptions.simple("- no next page button: ", error)
         return error
@@ -52,7 +51,7 @@ def next_page(navBar):
 
 def get_price(apartment, totalAdults, totalDays, cleaningFee):
     text = apartment.find_element(By.CSS_SELECTOR, '[data-testid = "price-and-discounted-price"]').find_element(
-        By.CLASS_NAME, 'fde444d7ef._e885fdc12').text
+        By.CLASS_NAME, 'fcab3ed991.bd73d13072').text
     priceText = text.split(' ')[-1]
     price = float(priceText.replace(',', ''))
     dayTax = int(totalAdults) * 2
@@ -62,10 +61,10 @@ def get_price(apartment, totalAdults, totalDays, cleaningFee):
 
 def get_score(apartment):
     try:
-        scoreRaw = apartment.find_element(By.CLASS_NAME, '_9c5f726ff.bd528f9ea6').text
+        scoreRaw = apartment.find_element(By.CLASS_NAME, 'b5cd09854e.d10a6220b4').text
     except NoSuchElementException:
         try:
-            scoreRaw = apartment.find_element(By.CLASS_NAME, '_9c5f726ff._192b3a196.f1cbb919ef').text
+            scoreRaw = apartment.find_element(By.CLASS_NAME, 'b5cd09854e.f0d4d6a2f5.e46e88563a').text
             scoreRaw = scoreRaw.split(' ')[-1]
         except Exception:
             scoreRaw = '0'
@@ -73,5 +72,9 @@ def get_score(apartment):
 
 
 def get_reviews(apartment):
-    reviewsRaw = apartment.find_element(By.CLASS_NAME, '_4abc4c3d5._1e6021d2f._6e869d6e0').text.split(' ')[0]
+    try:
+        reviewsRaw = apartment.find_element(By.CLASS_NAME, 'd8eab2cf7f.c90c0a70d3.db63693c62').text
+        reviewsRaw = reviewsRaw.split(' ')[0]
+    except NoSuchElementException:
+        reviewsRaw = '0'
     return int(reviewsRaw[0] + reviewsRaw[2:] if (("," in reviewsRaw) or ("." in reviewsRaw)) else reviewsRaw)
